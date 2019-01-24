@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Using WebSockets</title>
+    <script type="text/javascript">
+        var ws;
+        function $(id) {
+            return document.getElementById(id);
+        }
+        function WireEvents() {
+            $('send').addEventListener('click', function () {
+                var message = $('message');
+                ws.send(message.value);
+                message.value = '';
+            });
+            $('close').addEventListener('click', function () {
+                ws.close();
+            });
+        }
+        function CreateSpan(text) {
+            var span = document.createElement('span');
+            span.innerHTML = text + '<br />';
+            return span;
+        }
+        window.onload = function () {
+            WireEvents();
+            var conversatioin = $('conversation');
+            var url = 'ws://localhost:57640/WebSocketServer2.ashx?chatName=Dan';
+            ws = new WebSocket(url);
+            ws.onerror = function (e) {
+                conversatioin.appendChild(CreateSpan('Problem with connection!'));
+            };
+            ws.onopen = function () {
+
+            };
+            ws.onmessage = function (e) {
+                conversatioin.appendChild(CreateSpan(e.data.toString()));
+            };
+            ws.onclose = function () {
+                conversatioin.innerHTML = 'Closed Connection!';
+            };
+        };
+    </script>
+</head>
+<body>
+    <p id="conversation"></p>
+    <input type="text" id="message" name="name" value="" />
+    <br />
+    <input type="button" id="send" name="name" value="Send" />
+    <br />
+    <input type="button" id="close" name="name" value="Close" />
+</body>
+</html>
